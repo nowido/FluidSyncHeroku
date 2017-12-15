@@ -6,6 +6,6 @@ const server = http.createServer((req, res) => {
   res.end('Hello World\n');
 });
 
-server.listen(() => {
+server.listen(process.env.PORT, () => {
   console.log('Server running...');
 });
