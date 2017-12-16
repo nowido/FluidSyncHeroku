@@ -1,5 +1,3 @@
-import { setInterval } from 'timers';
-
 const http = require('http');
 
 const PERIOD = 10 * 1000;
