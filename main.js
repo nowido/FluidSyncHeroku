@@ -1,6 +1,6 @@
 const http = require('http');
 
-const PERIOD = 10 * 1000;
+const PERIOD = 15 * 60 * 1000;
 const pingTarget = 'fluidsync2.herokuapp.com';
 
 const pingOptions = 
@@ -18,10 +18,7 @@ const server = http.createServer((req, res) => {
 
 setInterval(() => {
 
-    const pingRequest = http.request(pingOptions, (res) => {
-        console.log('!!');
-    });
-    
+    const pingRequest = http.request(pingOptions);    
     pingRequest.end();
 
 }, PERIOD);
