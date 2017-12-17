@@ -31,13 +31,14 @@ io.on('connection', function (socket)
 
       for(let i = 0; i < keys.length; ++i)      
       {
-        console.log(io.sockets.sockets[keys[i]].id);
-        /*
-        if(io.sockets[i].id !== socket.id)
+        //console.log(io.sockets.sockets[keys[i]].id);
+        
+        let target = io.sockets.sockets[keys[i]];
+
+        if(target.id !== socket.id)
         {
-          io.sockets[i].emit(message.to, {from: message.from, payload: message.payload});
+          target.emit(message.to, {from: message.from, payload: message.payload});
         }
-        */
       }      
 
       //io.emit(message.to, {from: message.from, payload: message.payload});
