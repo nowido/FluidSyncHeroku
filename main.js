@@ -1,28 +1,48 @@
 const http = require('http');
+const socketServer = require('socket.io');
 
 const PERIOD = 15 * 60 * 1000;
 const pingTarget = 'fluidsync2.herokuapp.com';
 
-const pingOptions = 
-{
-    hostname: pingTarget//,
-    //port: process.env.PORT
-};
+const pingOptions = { hostname: pingTarget };
 
-const server = http.createServer((req, res) => {
+const httpServer = http.createServer((req, res) => {
   res.statusCode = 200;
   res.setHeader('Content-Type', 'text/plain');
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.end('Hello World\n');
 });
 
-setInterval(() => {
+const io = new socketServer(httpServer);
 
+//var registry = {};
+
+io.on('connection', function (socket) 
+{
+    //registry[socket.id] = {};
+    //console.log(socket.id + ' connected');
+
+    socket.on('send', function (message) 
+    {
+      //console.log(message);
+
+      socket.emit(message.to, {from: message.from, payload: message.payload});
+    });
+
+    /*
+    socket.on('disconnect', function(reason){
+
+      delete registry[socket.id];
+      console.log(socket.id + ' disconnected by reason: ' + reason);        
+    });    
+    */
+});
+
+setInterval(() => {
     const pingRequest = http.request(pingOptions);    
     pingRequest.end();
-
 }, PERIOD);
 
-server.listen(process.env.PORT, () => {
+httpServer.listen(process.env.PORT, () => {
   console.log('Server running...');
 });
