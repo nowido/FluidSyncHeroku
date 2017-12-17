@@ -27,9 +27,11 @@ io.on('connection', function (socket)
     {
       console.log(message);
       
-      for(s in io.sockets)
+      let keys = Object.keys(io.sockets.sockets);
+
+      for(let i = 0; i < keys.length; ++i)      
       {
-        console.log(s);
+        console.log(io.sockets.sockets[i].id);
         /*
         if(io.sockets[i].id !== socket.id)
         {
