@@ -31,7 +31,7 @@ io.on('connection', function (socket)
 
       for(let i = 0; i < keys.length; ++i)      
       {
-        console.log(io.sockets.sockets[i].id);
+        console.log(io.sockets.sockets[keys[i]].id);
         /*
         if(io.sockets[i].id !== socket.id)
         {
