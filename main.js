@@ -21,7 +21,7 @@ io.on('connection', function (socket)
 {
     //registry[socket.id] = {};
     console.log(socket.id + ' connected');
-    console.log(io.sockets);
+    //console.log(io.sockets);
 
     socket.on('send', function (message) 
     {
