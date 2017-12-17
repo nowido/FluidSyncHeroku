@@ -20,22 +20,23 @@ const io = new socketServer(httpServer);
 io.on('connection', function (socket) 
 {
     //registry[socket.id] = {};
-    //console.log(socket.id + ' connected');
+    console.log(socket.id + ' connected');
+    console.log(io.sockets);
 
     socket.on('send', function (message) 
     {
-      //console.log(message);
+      console.log(message);
 
       socket.emit(message.to, {from: message.from, payload: message.payload});
     });
 
-    /*
+    //*
     socket.on('disconnect', function(reason){
 
-      delete registry[socket.id];
+      //delete registry[socket.id];
       console.log(socket.id + ' disconnected by reason: ' + reason);        
     });    
-    */
+    //*/
 });
 
 setInterval(() => {
