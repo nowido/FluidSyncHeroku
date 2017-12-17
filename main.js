@@ -27,7 +27,7 @@ io.on('connection', function (socket)
     {
       console.log(message);
       
-      foreach(s in io.sockets)
+      for(s in io.sockets)
       {
         console.log(s.id);
         /*
