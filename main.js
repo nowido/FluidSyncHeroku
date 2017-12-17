@@ -27,6 +27,7 @@ io.on('connection', function (socket)
     {
       console.log(message);
 
+      /*
       let count = io.sockets.length;
 
       for(let i = 0; i < count; ++i)
@@ -36,6 +37,9 @@ io.on('connection', function (socket)
           io.sockets[i].emit(message.to, {from: message.from, payload: message.payload});
         }
       }      
+      */
+
+      io.emit(message.to, {from: message.from, payload: message.payload});
     });
 
     //*
