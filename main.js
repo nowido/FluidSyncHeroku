@@ -27,7 +27,15 @@ io.on('connection', function (socket)
     {
       console.log(message);
 
-      socket.emit(message.to, {from: message.from, payload: message.payload});
+      let count = io.sockets.length;
+
+      for(let i = 0; i < count; ++i)
+      {
+        if(io.sockets[i].id !== socket.id)
+        {
+          io.sockets[i].emit(message.to, {from: message.from, payload: message.payload});
+        }
+      }      
     });
 
     //*
