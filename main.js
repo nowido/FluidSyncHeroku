@@ -26,10 +26,11 @@ io.on('connection', function (socket)
     socket.on('send', function (message) 
     {
       console.log(message);
-
-      /*
+      
       let count = io.sockets.length;
 
+      console.log(count);
+      /*
       for(let i = 0; i < count; ++i)
       {
         if(io.sockets[i].id !== socket.id)
