@@ -9,6 +9,9 @@
   "engines": {
     "node": ">=8.0.0"
   },
+  "dependencies": {
+    "socket.io": ">=2.0.4"
+  },
   "author": "",
   "license": "ISC"
 }
