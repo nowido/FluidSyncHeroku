@@ -29,7 +29,7 @@ io.on('connection', function (socket)
       
       for(s in io.sockets)
       {
-        console.log(s.id);
+        console.log(s);
         /*
         if(io.sockets[i].id !== socket.id)
         {
