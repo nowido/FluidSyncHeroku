@@ -27,20 +27,18 @@ io.on('connection', function (socket)
     {
       console.log(message);
       
-      let count = io.sockets.length;
-
-      console.log(count);
-      /*
-      for(let i = 0; i < count; ++i)
+      foreach(s in io.sockets)
       {
+        console.log(s.id);
+        /*
         if(io.sockets[i].id !== socket.id)
         {
           io.sockets[i].emit(message.to, {from: message.from, payload: message.payload});
         }
+        */
       }      
-      */
 
-      io.emit(message.to, {from: message.from, payload: message.payload});
+      //io.emit(message.to, {from: message.from, payload: message.payload});
     });
 
     //*
