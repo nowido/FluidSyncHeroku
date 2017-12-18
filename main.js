@@ -98,7 +98,7 @@ function publish(message)
 
 io.on('connection', function (socket) 
 {    
-    console.log(socket.id + ' connected');
+    //console.log(socket.id + ' connected');
 
     socket.on('subscribe', function(channelId){
         registerSubscription(channelId, socket.id);    
@@ -110,34 +110,16 @@ io.on('connection', function (socket)
     
     socket.on('publish', function (message) 
     {
-      console.log(message);
+      //console.log(message);
       
       publish(message);
-
-      /*
-      let keys = Object.keys(io.sockets.sockets);
-
-      for(let i = 0; i < keys.length; ++i)      
-      {
-        //console.log(io.sockets.sockets[keys[i]].id);
-        
-        let target = io.sockets.sockets[keys[i]];
-
-        if(target.id !== socket.id)
-        {
-          target.emit(message.to, {from: message.from, payload: message.payload});
-        }
-      }      
-
-      //io.emit(message.to, {from: message.from, payload: message.payload});
-      */
     });
     
     socket.on('disconnect', function(reason){
 
       removeAllSubscriptions(socket.id);    
       
-      console.log(socket.id + ' disconnected by reason: ' + reason);        
+      //console.log(socket.id + ' disconnected by reason: ' + reason);        
     });        
 });
 
