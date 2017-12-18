@@ -15,18 +15,106 @@ const httpServer = http.createServer((req, res) => {
 
 const io = new socketServer(httpServer);
 
-//var registry = {};
+//----------------------------------------------------------------------
+
+var registry = 
+{
+        // dictionary to store sockets subscribed for 'some çhannel'
+    channels: {}
+};
+
+function registerSubscription(channelId, socketId)
+{
+    let channels = registry.channels;
+
+    let entry = channels[channelId];
+
+    if(entry === undefined)
+    {
+        entry = channels[channelId] = {};
+    }
+
+    entry[socketId] = true;
+}
+
+function removeSubscription(channelId, socketId)
+{
+    let channels = registry.channels;
+
+    let entry = channels[channelId];
+
+    if(entry !== undefined)
+    {
+        delete entry[socketId];
+    }
+}
+
+function removeAllSubscriptions(socketId)
+{
+    let channels = registry.channels;
+
+    let channelsIds = Object.keys(channels);
+
+    let count = channelsIds.length;
+
+    for(let i = 0; i < count; ++i)
+    {
+        let channelId = channelsIds[i];
+
+        let entry = channels[channelId];
+
+        delete entry[socketId];                
+    }
+}
+
+function publish(message)
+{
+    let channelId = message.channel;
+    
+    let subscribers = registry.channels[channelId];
+
+    if(subscribers === undefined)
+    {
+        return;
+    }
+
+    let socketsIds = Object.keys(subscribers);
+
+    let count = socketsIds.length;
+    
+    let allSockets = io.sockets.sockets;
+
+    for(let i = 0; i < count; ++i)
+    {
+        let socketId = socketsIds[i];
+
+        let socket = allSockets[socketId];
+
+        socket.emit(channelId, message);
+    }
+}
+
+//----------------------------------------------------------------------
 
 io.on('connection', function (socket) 
-{
-    //registry[socket.id] = {};
+{    
     console.log(socket.id + ' connected');
-    //console.log(io.sockets);
 
-    socket.on('send', function (message) 
+    socket.on('subscribe', function(channelId){
+        registerSubscription(channelId, socket.id);    
+    });
+
+    socket.on('unsubscribe', function(channelId){
+        removeSubscription(channelId, socket.id);    
+    });
+    
+    socket.on('publish', function (message) 
     {
       console.log(message);
       
+      publish(message);
+
+      /*
       let keys = Object.keys(io.sockets.sockets);
 
       for(let i = 0; i < keys.length; ++i)      
@@ -42,15 +130,15 @@ io.on('connection', function (socket)
       }      
 
       //io.emit(message.to, {from: message.from, payload: message.payload});
+      */
     });
-
-    //*
+    
     socket.on('disconnect', function(reason){
 
-      //delete registry[socket.id];
+      removeAllSubscriptions(socket.id);    
+      
       console.log(socket.id + ' disconnected by reason: ' + reason);        
-    });    
-    //*/
+    });        
 });
 
 setInterval(() => {
