@@ -25,13 +25,20 @@ var registry =
 
 function registerSubscription(channelId, socketId)
 {
+    if(typeof channelId !== 'string')
+    {
+        return;
+    }
+
+    let prefixedChannelId = 'rc#' + channelId;
+
     let channels = registry.channels;
 
-    let entry = channels[channelId];
+    let entry = channels[prefixedChannelId];
 
     if(entry === undefined)
     {
-        entry = channels[channelId] = {};
+        entry = channels[prefixedChannelId] = {};
     }
 
     entry[socketId] = true;
@@ -39,9 +46,16 @@ function registerSubscription(channelId, socketId)
 
 function removeSubscription(channelId, socketId)
 {
+    if(typeof channelId !== 'string')
+    {
+        return;
+    }
+    
+    let prefixedChannelId = 'rc#' + channelId;
+
     let channels = registry.channels;
 
-    let entry = channels[channelId];
+    let entry = channels[prefixedChannelId];
 
     if(entry !== undefined)
     {
@@ -70,8 +84,15 @@ function removeAllSubscriptions(socketId)
 function publish(message)
 {
     let channelId = message.channel;
+
+    if(typeof channelId !== 'string')
+    {
+        return;
+    }
     
-    let subscribers = registry.channels[channelId];
+    let prefixedChannelId = 'rc#' + channelId;
+        
+    let subscribers = registry.channels[prefixedChannelId];
 
     if(subscribers === undefined)
     {
