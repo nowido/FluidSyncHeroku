@@ -49,7 +49,7 @@ socket.on('bar', (message) => {
 
 ## FluidSync commands
 
-FluidSync provides two main actions: *publish* and *subscribe*.
+**FluidSync** provides two main actions: *publish* and *subscribe*.
 
 Publish takes an object with 3 members:
 
