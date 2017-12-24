@@ -51,7 +51,7 @@ socket.on('bar', (message) => {
 
 **FluidSync** provides two main actions: *publish* and *subscribe*.
 
-Publish takes an object with 3 members:
+*publish* takes an object with 3 members:
 
 ```
 let message = 
@@ -64,9 +64,11 @@ let message =
 socket.emit('publish', message);
 ```
 
-Subscribe takes a string:
+*subscribe* takes a string:
 
+```
 socket.emit('subscribe', <string; channel to listen on>);
+```
 
 FluidSync destroys client’s subscriptions when client socket is disconnected. Clients have to (re)subscribe on (re)connection. A good practice is to emit needed subscriptions on ‘connect’ event:
 
