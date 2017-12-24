@@ -45,11 +45,7 @@ socket.on('bar', (message) => {
 
 ## Why Heroku?
 
-[Heroku](https://www.heroku.com) grants a generous free hosting. Verified accounts (credit card needed) get 1000 monthly *dyno* hours for absolutely free. 
-
-A little silly trick needed to get our *dyno* (container) always on, because a free *dyno* on Heroku goes to sleep when it doesn’t receive web traffic for a period longer than 30 minutes. To prevent *dyno* from sleep we provide ‘ping’ traffic from inside its own node.js process, on timer.
-
-So, **FluidSync** service runs 24 hours a day, accessible all over the world.
+[Heroku](https://www.heroku.com) grants a generous free hosting. Verified accounts (credit card needed) get 1000 monthly *dyno* hours for absolutely free. So, **FluidSync** service runs 24 hours a day, accessible all over the world.
 
 ## FluidSync commands
 
