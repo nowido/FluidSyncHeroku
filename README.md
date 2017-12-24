@@ -27,7 +27,7 @@ const io = require('socket.io-client');
 ```
 let socket = io('https://fluidsync2.herokuapp.com');
 socket.emit('publish', 
-{channel: 'bar', from: 'foo', payload: 'Hello!'});
+    {channel: 'bar', from: 'foo', payload: 'Hello!'});
 ```
 
 ‘Get started’ subscriber code:
@@ -35,7 +35,7 @@ socket.emit('publish',
 ```
 let socket = io('https://fluidsync2.herokuapp.com');
 socket.on('connect', () => {
-socket.emit('subscribe', 'bar');
+    socket.emit('subscribe', 'bar');
 });
 socket.on('bar', (message) => {               
     console.log(message);
@@ -47,8 +47,4 @@ socket.on('bar', (message) => {
 Heroku grants a generous free hosting. Verified accounts (credit card needed) get 1000 monthly hours for free. So, your project can run 24 hours a day. 
 
 A little trick needed to get your *dyno* always on, because a free *dyno* goes to sleep when it doesn’t receive web traffic for a period longer than half an hour. To prevent *dyno* from sleep we can provide ‘ping’ traffic from inside its own process, on timer.
-
-
-
-
 
