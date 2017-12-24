@@ -2,7 +2,7 @@
 
 ## Introduction
 
-**FluidSync** is *a very simple* implementation of Publish/Subscribe pattern. It is node.js project hosted on Heroku platform.
+**FluidSync** is *a very simple* implementation of Publish/Subscribe pattern. It is Node.js project hosted on Heroku platform.
 
 Developers can access **FluidSync** service with **socket.io** [library](https://socket.io/).
 
