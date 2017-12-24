@@ -1,5 +1,5 @@
-# FluidSyncHeroku
+# FluidSync
 
 ## Introduction
 
-FluidSync is Node.js implementation of Publish/Subscribe concept.
+[FluidSync](https://fluidsync2.herokuapp.com) is Node.js implementation of Publish/Subscribe concept hosted on Heroku platform.
