@@ -26,7 +26,9 @@ const io = require('socket.io-client');
 
 ```
 let socket = io('https://fluidsync2.herokuapp.com');
-socket.emit('publish', {channel: 'bar', from: 'foo', payload: 'Hello!'});
+socket.on('connect', () => {
+    socket.emit('publish', {channel: 'bar', from: 'foo', payload: 'Hello!'});
+});
 ```
 
 ‘Get started’ subscriber code:
