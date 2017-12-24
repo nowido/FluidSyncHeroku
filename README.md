@@ -70,7 +70,7 @@ socket.emit('publish', message);
 socket.emit('subscribe', <string; channel to listen on>);
 ```
 
-FluidSync destroys client’s subscriptions when client socket is disconnected. Clients have to (re)subscribe on (re)connection. A good practice is to emit needed subscriptions on ‘connect’ event:
+**FluidSync** destroys client’s subscriptions when client socket is disconnected. Clients have to (re)subscribe on (re)connection. A good practice is to emit needed subscriptions on ‘connect’ event:
 
 ```
 socket.on('connect', () => {
