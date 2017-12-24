@@ -2,7 +2,7 @@
 
 ## Introduction
 
-**FluidSync** is Node.js implementation of Publish/Subscribe concept. It is hosted on Heroku platform.
+**FluidSync** is *a very simple* implementation of Publish/Subscribe pattern. It is node.js project hosted on Heroku platform.
 
 Developers can access **FluidSync** service with **socket.io** [library](https://socket.io/).
 
@@ -44,7 +44,44 @@ socket.on('bar', (message) => {
 
 ## Why Heroku?
 
-Heroku grants a generous free hosting. Verified accounts (credit card needed) get 1000 monthly hours for free. So, your project can run 24 hours a day. 
+[Heroku](https://www.heroku.com) grants a generous free hosting. Verified accounts (credit card needed) get 1000 monthly *dyno* hours for absolutely free. 
 
-A little trick needed to get your *dyno* always on, because a free *dyno* goes to sleep when it doesn’t receive web traffic for a period longer than half an hour. To prevent *dyno* from sleep we can provide ‘ping’ traffic from inside its own process, on timer.
+A little silly trick needed to get our *dyno* (container) always on, because a free *dyno* on Heroku goes to sleep when it doesn’t receive web traffic for a period longer than 30 minutes. To prevent *dyno* from sleep we provide ‘ping’ traffic from inside its own node.js process, on timer.
+
+So, **FluidSync** service runs 24 hours a day, accessible all over the world.
+
+## FluidSync commands
+
+FluidSync provides two main actions: *publish* and *subscribe*.
+
+Publish takes an object with 3 members:
+
+```
+let message = 
+{
+    channel: <string; channel to publish on>, 
+    from: <string; publisher id>, 
+    payload: <Object; anything you want to publish>
+};
+
+socket.emit('publish', message);
+```
+
+Subscribe takes a string:
+
+socket.emit('subscribe', <string; channel to listen on>);
+
+FluidSync destroys client’s subscriptions when client socket is disconnected. Clients have to (re)subscribe on (re)connection. A good practice is to emit needed subscriptions on ‘connect’ event:
+
+```
+socket.on('connect', () => {
+    socket.emit('subscribe', ...);
+});
+```
+
+At present, **FluidSync** doesn’t support *arrays of channels* for multiple subscriptions in one ‘subscribe’ action. You need to emit ‘subscribe’ several times if you want to listen on several channels.
+
+## FluidSync service is lightweight and almost stateless
+
+**FluidSync** supports no buffering, no messages queueing, no feedback from the service itself. You have to implement your own protocol over it.
 
