@@ -60,6 +60,11 @@ function removeSubscription(channelId, socketId)
     if(entry !== undefined)
     {
         delete entry[socketId];
+
+        if(Object.keys(entry).length === 0)
+        {
+          delete channels[prefixedChannelId];    
+        }            
     }
 }
 
@@ -77,7 +82,12 @@ function removeAllSubscriptions(socketId)
 
         let entry = channels[channelId];
 
-        delete entry[socketId];                
+        delete entry[socketId];     
+        
+        if(Object.keys(entry).length === 0)
+        {
+          delete channels[channelId];
+        }                    
     }
 }
 
