@@ -19,52 +19,46 @@ const io = new socketServer(httpServer);
 
 var registry = 
 {
-        // dictionary to store sockets subscribed for 'some çhannel'
-    channels: {}
+        // Map to store sockets subscribed for 'some channel'
+    channels: new Map()
 };
 
 function registerSubscription(channelId, socketId)
 {
-    if(typeof channelId !== 'string')
+    if((typeof channelId === 'string') && (channelId.length > 0))
     {
-        return;
+        let channels = registry.channels;
+
+        let subscribers = channels.get(channelId);
+
+        if(subscribers === undefined)
+        {
+            channels.set(channelId, new Set([socketId]));
+        }
+        else
+        {
+            subscribers.add(socketId);
+        }            
     }
-
-    let prefixedChannelId = 'rc#' + channelId;
-
-    let channels = registry.channels;
-
-    let entry = channels[prefixedChannelId];
-
-    if(entry === undefined)
-    {
-        entry = channels[prefixedChannelId] = {};
-    }
-
-    entry[socketId] = true;
 }
 
 function removeSubscription(channelId, socketId)
 {
-    if(typeof channelId !== 'string')
+    if((typeof channelId === 'string') && (channelId.length > 0))
     {
-        return;
-    }
-    
-    let prefixedChannelId = 'rc#' + channelId;
+        let channels = registry.channels;
 
-    let channels = registry.channels;
-
-    let entry = channels[prefixedChannelId];
-
-    if(entry !== undefined)
-    {
-        delete entry[socketId];
-
-        if(Object.keys(entry).length === 0)
+        let subscribers = channels.get(channelId);
+        
+        if(subscribers !== undefined)
         {
-          delete channels[prefixedChannelId];    
-        }            
+            subscribers.delete(socketId);
+
+            if(subscribers.size === 0)            
+            {
+                channels.delete(channelId);
+            }
+        }
     }
 }
 
@@ -72,57 +66,50 @@ function removeAllSubscriptions(socketId)
 {
     let channels = registry.channels;
 
-    let channelsIds = Object.keys(channels);
+    let channelsToRemove = [];
 
-    let count = channelsIds.length;
+    channels.forEach((subscribers, channelId) => {
 
-    for(let i = 0; i < count; ++i)
-    {
-        let channelId = channelsIds[i];
-
-        let entry = channels[channelId];
-
-        delete entry[socketId];     
-        
-        if(Object.keys(entry).length === 0)
+        if(subscribers)
         {
-          delete channels[channelId];
-        }                    
-    }
+            subscribers.delete(socketId);
+
+            if(subscribers.size === 0)
+            {
+                channelsToRemove.push(channelId);
+            }
+        }        
+    });
+
+    channelsToRemove.forEach(channelId => {
+
+        channels.delete(channelId);
+    });
 }
 
 function publish(message)
 {
     let channelId = message.channel;
 
-    if(typeof channelId !== 'string')
+    if((typeof channelId === 'string') && (channelId.length > 0))
     {
-        return;
-    }
-    
-    let prefixedChannelId = 'rc#' + channelId;
-        
-    let subscribers = registry.channels[prefixedChannelId];
+        let subscribers = registry.channels.get(channelId);
 
-    if(subscribers === undefined)
-    {
-        return;
-    }
+        if(subscribers !== undefined)
+        {
+            let allSockets = io.sockets.sockets;
+            
+            subscribers.forEach(socketId => {
 
-    let socketsIds = Object.keys(subscribers);
+                let socket = allSockets[socketId];
 
-    let count = socketsIds.length;
-    
-    let allSockets = io.sockets.sockets;
-
-    for(let i = 0; i < count; ++i)
-    {
-        let socketId = socketsIds[i];
-
-        let socket = allSockets[socketId];
-
-        socket.emit(channelId, message);
-    }
+                if(socket)
+                {
+                    socket.emit(channelId, message);
+                }                
+            });
+        }
+    }   
 }
 
 //----------------------------------------------------------------------
