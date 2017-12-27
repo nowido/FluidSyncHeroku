@@ -20,25 +20,24 @@ const io = new socketServer(httpServer);
 var registry = 
 {
         // Map to store sockets subscribed for 'some channel'
-    channels: new Map()
+    channels: new Map(),
+
+        // Map to store channels socket 'socket.id' is subscribed to
+        // (reverse registry to speed up cleanup when disconnect)
+    socketsSubscriptions: new Map()
 };
 
 function registerSubscription(channelId, socketId)
 {
     if((typeof channelId === 'string') && (channelId.length > 0))
     {
-        let channels = registry.channels;
+        // direct registry (channels -> sockets)
 
-        let subscribers = channels.get(channelId);
+        addGeneral(registry.channels, channelId, socketId);
 
-        if(subscribers === undefined)
-        {
-            channels.set(channelId, new Set([socketId]));
-        }
-        else
-        {
-            subscribers.add(socketId);
-        }            
+        // reverse registry (sockets -> channels)
+
+        addGeneral(registry.socketsSubscriptions, socketId, channelId);
     }
 }
 
@@ -46,45 +45,62 @@ function removeSubscription(channelId, socketId)
 {
     if((typeof channelId === 'string') && (channelId.length > 0))
     {
-        let channels = registry.channels;
+        // direct registry (channels -> sockets)
 
-        let subscribers = channels.get(channelId);
+        deleteGeneral(registry.channels, channelId, socketId);
+
+        // reverse registry (sockets -> channels)
+
+        deleteGeneral(registry.socketsSubscriptions, socketId, channelId);
+    }
+}
+
+function addGeneral(mapObject, mapKey, elementOfSet)
+{
+    let entry = mapObject.get(mapKey);
+
+    if(entry === undefined)
+    {
+        mapObject.set(mapKey, new Set([elementOfSet]));
+    }
+    else
+    {
+        entry.add(elementOfSet);
+    }        
+}
+
+function deleteGeneral(mapObject, mapKey, elementOfSet)
+{
+    let entry = mapObject.get(mapKey);
+    
+    if(entry !== undefined)
+    {
+        entry.delete(elementOfSet);
         
-        if(subscribers !== undefined)
+        if(entry.size === 0)
         {
-            subscribers.delete(socketId);
-
-            if(subscribers.size === 0)            
-            {
-                channels.delete(channelId);
-            }
+            mapObject.delete(mapKey);    
         }
     }
 }
 
 function removeAllSubscriptions(socketId)
 {
-    let channels = registry.channels;
+    let socketsSubscriptions = registry.socketsSubscriptions;
 
-    let channelsToRemove = [];
+    let socketChannels = socketsSubscriptions.get(socketId);
 
-    channels.forEach((subscribers, channelId) => {
+    if(socketChannels !== undefined)
+    {
+        let channels = registry.channels;
 
-        if(subscribers)
-        {
-            subscribers.delete(socketId);
+        socketChannels.forEach(channelId => {       
+                 
+            deleteGeneral(channels, channelId, socketId);
+        });
 
-            if(subscribers.size === 0)
-            {
-                channelsToRemove.push(channelId);
-            }
-        }        
-    });
-
-    channelsToRemove.forEach(channelId => {
-
-        channels.delete(channelId);
-    });
+        socketsSubscriptions.delete(socketId);
+    }
 }
 
 function publish(message)
@@ -116,14 +132,16 @@ function publish(message)
 
 io.on('connection', function (socket) 
 {    
-    //console.log(socket.id + ' connected');
+    let socketId = socket.id;
 
+    //console.log(socketId + ' connected');
+    
     socket.on('subscribe', function(channelId){
-        registerSubscription(channelId, socket.id);    
+        registerSubscription(channelId, socketId);    
     });
 
     socket.on('unsubscribe', function(channelId){
-        removeSubscription(channelId, socket.id);    
+        removeSubscription(channelId, socketId);    
     });
     
     socket.on('publish', function (message) 
@@ -135,9 +153,9 @@ io.on('connection', function (socket)
     
     socket.on('disconnect', function(reason){
 
-      removeAllSubscriptions(socket.id);    
+      removeAllSubscriptions(socketId);    
       
-      //console.log(socket.id + ' disconnected by reason: ' + reason);        
+      //console.log(socketId + ' disconnected by reason: ' + reason);        
     });        
 });
 
