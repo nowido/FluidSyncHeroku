@@ -10,7 +10,10 @@ const httpServer = http.createServer((req, res) => {
   res.statusCode = 200;
   res.setHeader('Content-Type', 'text/plain');
   res.setHeader('Access-Control-Allow-Origin', '*');
-  res.end('OK');
+  const ip = req.socket.localAddress;
+  const port = req.socket.localPort;    
+  res.end('OK ' + ip + ':' + port);
+  //res.end('OK');
 });
 
 const io = new socketServer(httpServer);
