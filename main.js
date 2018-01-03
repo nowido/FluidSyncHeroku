@@ -13,7 +13,7 @@ const httpServer = http.createServer((req, res) => {
   res.end('OK');
 });
 
-const io = new socketServer(httpServer);
+const io = new socketServer(httpServer, {transports: ['websocket']});
 
 //----------------------------------------------------------------------
 
