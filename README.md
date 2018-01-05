@@ -25,7 +25,7 @@ const io = require('socket.io-client');
 ‘Get started’ publisher code:
 
 ```
-let socket = io('https://fluidsync2.herokuapp.com');
+let socket = io('https://fluidsync2.herokuapp.com', {transports: ['websocket']});
 socket.on('connect', () => {
     socket.emit('publish', {channel: 'bar', from: 'foo', payload: 'Hello!'});
 });
@@ -34,7 +34,7 @@ socket.on('connect', () => {
 ‘Get started’ subscriber code:
 
 ```
-let socket = io('https://fluidsync2.herokuapp.com');
+let socket = io('https://fluidsync2.herokuapp.com', {transports: ['websocket']});
 socket.on('connect', () => {
     socket.emit('subscribe', 'bar');
 });
@@ -45,7 +45,7 @@ socket.on('bar', (message) => {
 
 ## Why Heroku?
 
-[Heroku](https://www.heroku.com) grants a generous free hosting. Verified accounts (credit card needed) get 1000 monthly *dyno* hours for absolutely free. So, **FluidSync** service runs 24 hours a day, accessible all over the world.
+[Heroku](https://www.heroku.com) grants a generous free hosting. Verified accounts (credit card needed) get 1000 monthly *dyno* hours for absolutely free. So, **FluidSync** service runs 24 hours a day.
 
 ## FluidSync commands
 
